@@ -1,0 +1,14 @@
+body{
+  width: 100%;
+  min-height: 100dvh;
+  padding: 0;
+  margin: 0;
+  background-color: #cecece;
+}
+
+.rootLayout{
+  width: 1920px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background-color: #f1efef;
+}
