@@ -1,0 +1,14 @@
+.editor-page-wrapper{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin: auto 0;
+    
+}
+
+.editor-page-wrapper__content{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

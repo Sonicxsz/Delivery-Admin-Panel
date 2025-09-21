@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const apiBase = "http://localhost:8080/api/v1"
+
+export const base = "http://localhost:8080"
+const apiBase = base + "/api/v1"
 
 
 export const http = axios.create({
@@ -23,7 +25,6 @@ http.interceptors.response.use(async(response) => {
 }, 
 async (error) => {
   if (error.response?.status === 401) {
-    console.log("refresh or authorize")
   }
   throw error;
 })

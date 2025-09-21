@@ -1,0 +1,22 @@
+.path-wrapper{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background: var(--bg-color);
+    color: white;
+    padding: 1rem;
+}
+
+.path-wrapper h1 {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.path-viewer__link{
+    color: white;
+    text-decoration: none;
+}
+
+.path-viewer__link:hover{
+    text-decoration: underline;
+}   
