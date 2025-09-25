@@ -1,3 +1,4 @@
+import { create } from "zustand"
 
 interface BaseResponse<T> {
     success: boolean,
@@ -5,51 +6,65 @@ interface BaseResponse<T> {
     data: T
 }
 
+type Store = {
+        isAuth: boolean
+        setAuth: (val: boolean) => void
+    }
+
+
+type UserData = {
+    email: string
+    username: string
+}
+
 export interface Http {
     post: <T>(url: string, data?: any) => Promise<BaseResponse<T>>
     get: <T>(url: string) => Promise<BaseResponse<T>>
 }
 
+
 export class AuthService {
     private static instance: AuthService
     private http: Http
-    private isAuthorized = false;
-
     private constructor(http: Http) {
         this.http = http
     }
+
+    user: UserData | null =  null
     
+    store = create<Store>((set) => ({
+        isAuth: false, 
+        setAuth: (val: boolean) => set({ isAuth: val })
+    }))
 
     static getInstance(http: Http) {
         if (!AuthService.instance) {
-        AuthService.instance = new AuthService(http)
+            AuthService.instance = new AuthService(http)
         }
         return AuthService.instance
     }
 
-    login(email:string, password: string){
-        const body = JSON.stringify({email, password})
-        
-        this.http.post("/user/login", body).then(data => console.log(data))
+    login = async (email:string, password: string) => {
+        const resp = await this.http.post("/user/login", {email, password})
+
+        if(resp.success) {
+            this.store.getState().setAuth(true)
+        }
     }
 
     authByCookie = async () => {
-        await this.http.get("/user")
-
-        this.isAuthorized = true
-    }
-
-    getIsAuthorized() {
-        return this.isAuthorized
-    }
-
+        const resp = await this.http.get<UserData>("/user")
+        if(resp.success) {
+            this.store.getState().setAuth(true)
+            this.user = resp.data
+        }
+    }   
 
     logout() {
         document.cookie = ``   
-        this.isAuthorized = false
+        this.store.getState().setAuth(false)
+        this.user = null
     }
-    
-
 
 }
 

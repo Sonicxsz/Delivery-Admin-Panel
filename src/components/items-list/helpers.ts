@@ -1,5 +1,5 @@
 export const getKeys = (data: Record<string,string>[]) => {
-    if(!data[0]) return []
+    if(!data || !data[0]) return []
     
     return Object.keys(data[0]).map((el) => ({
         field: el,

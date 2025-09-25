@@ -42,6 +42,7 @@ export function EditorPage(){
     }
 
     return (
+//         
         <EditorContext.Provider value={{selected, formType, refresh,onCloseModal, setSelected, refreshList, onCreate, onChange}}>
             <div className="EditorPage">
                 <EditorHeader isRowSelected={Boolean(selected)}/>

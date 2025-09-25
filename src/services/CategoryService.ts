@@ -14,9 +14,7 @@ export class CategoryService {
     
     static getInstance(http: Http) {
         if (!CategoryService.instance) {
-            console.log("no instance")
             CategoryService.instance = new CategoryService(http)
-             console.log(CategoryService.instance)
         }
         return CategoryService.instance
     }

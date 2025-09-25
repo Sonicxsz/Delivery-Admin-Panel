@@ -7,7 +7,7 @@ export function PathViewer(){
 
     return (
         <div className='path-wrapper'>
-           <h1 >
+           <h1>
                 {renderPath(paths.at(-1) || "")}
            </h1>
         </div>

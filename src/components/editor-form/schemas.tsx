@@ -40,17 +40,14 @@ const FileProps: Field<"file"> = {
 
 
 
-const CategorySelector = () => {
+const CategorySelector = ({id}:{id?: number}) => {
   const [categoris,setCategories] = useState<Array<Category> | null>(null)
   const categoryService = CategoryService.getInstance(http)
-
   useEffect(() => {
     categoryService.getCategories().then(data => setCategories(data))
   }, [])
- 
-  return <Selector field="category_id">{categoris && categoris.map(el => (<MenuItem value={el.id}>{el.name}</MenuItem>))}</Selector>
+  return <Selector defaultValue={id}  field="category_id" >{categoris && categoris.map(el => (<MenuItem value={el.id}>{el.name}</MenuItem>))}</Selector>
 }
-
 
 export const CategorySchema = {
     id:{
@@ -84,7 +81,7 @@ export const CatalogSchema = {
   sku:StringProps,
   category_id: {
     ...NumberProps,
-    CustomComponent: () => <CategorySelector />
+    CustomComponent: (id?:number) => <CategorySelector id={id} />
 
   },
   description: StringProps

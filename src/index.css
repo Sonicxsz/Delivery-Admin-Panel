@@ -1,15 +1,16 @@
 @import url('./reset.css');
 
-/* @font-face {
+@font-face {
   font-family: 'Narmine';
   src: url('/fonts/narmine.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
-} */
+} 
 
-/* * {
-  font-family: 'Narmine', sans-serif;
-} */
+* {
+  font-family: 'Narmine', sans-serif !important;
+  /* color: white; */
+} 
 
 :root {
   --bg-color: #191919;
