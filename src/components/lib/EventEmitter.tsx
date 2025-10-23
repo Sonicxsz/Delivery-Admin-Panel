@@ -3,8 +3,8 @@ import { useEffect } from "react"
 export class EventEmitter<T extends string> {
     events:Partial<Record<T, Function[]>> = {}
 
-    emit (event:T)  {
-        this.events[event]?.forEach(fn => fn())
+    emit (event:T, data?: any) {
+        this.events[event]?.forEach(fn => fn(data))
     }
 
     private on (event: T, fn: Function){

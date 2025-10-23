@@ -5,15 +5,19 @@ import { Button, Modal } from "@mui/material";
 
 
 
-export function EditorHeader({isRowSelected}:{isRowSelected:boolean}){
+export function EditorHeader({selected}:{selected: Record<string, any> | null}) {
+
     const [confirm, setConfirm] = useState(false)
     const onCancel = () => setConfirm(false)
     const openConfirmModal = () => setConfirm(true)
-
+    const isRowSelected = Boolean(selected)
 
     const onCreate = () => EditorEmitter.emit("OnCreate")
     const onChange = () => EditorEmitter.emit("OnChange")
-    const onDelete = () => EditorEmitter.emit("OnDelete")
+    const onDelete = () => {
+        EditorEmitter.emit("OnDelete", selected)
+        onCancel()
+    }
     const onRefresh = () => EditorEmitter.emit("OnRefresh")
     
 

@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react"
-import { EditorEmitter, useEditorContext } from "../../pages/EditorPage/EditorPage"
-import './items-list.css'
 import { DataGrid } from "@mui/x-data-grid"
+import { EditorEmitter } from "../../pages/EditorPage/EditorPage"
 import { getKeys } from "./helpers"
+import { useEditorContext } from "../../pages/EditorPage/useEditorContext"
+
+import './items-list.css'
 
 
 
 
-export function ItemsList({loadItems}:{
+export function ItemsList({loadItems, name}:{
     loadItems: () => Promise<any[]>
+    name:string
 }) {
     const contextData = useEditorContext()
     const [loading, setLoading] = useState(true)
@@ -33,10 +36,11 @@ export function ItemsList({loadItems}:{
                 rows={data}
                 columns={fields}
                 pageSizeOptions={[20, 50]}
-                onRowClick={(e) => contextData?.setSelected(e.row)}
+                onRowClick={(e) => {
+                    contextData?.setSelected({...e.row, editorName: name})
+                }}
                 onRowDoubleClick={() => EditorEmitter.emit("OnRowDbClick")}
                 sx={{ border: 0, padding: '1rem' }}
-                
             />
   
 }

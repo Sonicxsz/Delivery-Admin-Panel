@@ -5,12 +5,9 @@ import { Button, TextField } from '@mui/material';
 import { http } from '../../app/http/http';
 import { AuthService } from '../../services/AuthService';
 
+const authService = AuthService.getInstance(http)
 
-
-
-    const authService = AuthService.getInstance(http)
-
-    export function AuthPage(){
+export function AuthPage(){
         const [values, setValues] = useState({login: "", password: ""})
         const isAuth = authService.store(state => state.isAuth)
 

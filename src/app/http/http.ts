@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 
-export const base = "http://localhost:8080"
+export const base = "http://localhost:3001"
 const apiBase = base + "/api/v1"
 
 

@@ -2,12 +2,12 @@ import { getBase64 } from "../lib/helpers"
 import { useEffect, useState } from "react";
 import { Selector } from "../ui/selector/Selector";
 import { CategoryService, type Category } from "../../services/CategoryService";
-import { http } from "../../app/http/http";
-import { MenuItem, Typography } from "@mui/material";
+import { Checkbox, InputLabel, MenuItem, Typography } from "@mui/material";
 
 
 type FieldTypeMap = {
   text: string;
+  boolean: boolean
   textArea: string;
   file: File;
 };
@@ -32,7 +32,6 @@ const StringProps: Field<"text"> = {
 const FileProps: Field<"file"> = {
   input: "file",
   transform: async (file) => {
-
     const result = await getBase64(file) ?? "";
     return result as string;
   },
@@ -42,11 +41,24 @@ const FileProps: Field<"file"> = {
 
 const CategorySelector = ({id}:{id?: number}) => {
   const [categoris,setCategories] = useState<Array<Category> | null>(null)
-  const categoryService = CategoryService.getInstance(http)
+  const categoryService = CategoryService.getInstance()
   useEffect(() => {
     categoryService.getCategories().then(data => setCategories(data))
   }, [])
   return <Selector defaultValue={id}  field="category_id" >{categoris && categoris.map(el => (<MenuItem value={el.id}>{el.name}</MenuItem>))}</Selector>
+}
+
+
+const Toggler = ({label, value}:{label:string, value: boolean}) => {
+  const [checked, setChecked] = useState(value)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(e.target.checked)
+  }
+  return <InputLabel >
+        {label}
+        <Checkbox name="is_mini" checked={checked} onChange={handleChange} />
+      </InputLabel>
 }
 
 export const CategorySchema = {
@@ -55,7 +67,12 @@ export const CategorySchema = {
     CustomComponent: (value: any) => value && <Typography>ID: {value}</Typography>
   },
   name: StringProps,
-  code: StringProps
+  code: StringProps,
+  is_mini: {
+    ...StringProps,
+    transform: (value:string) => value === "true" || value === "1",
+    CustomComponent: (value:any) => <Toggler label="Мини категория" value={value} />
+  }
 };
 
 
@@ -73,12 +90,10 @@ export const CatalogSchema = {
     CustomComponent: (value: any) => value && <Typography>ID: {value}</Typography>
   },
   imageUrl: FileProps,
-  weight: NumberProps,
+  grams: NumberProps,
   price: NumberProps,
   name: StringProps,
-  amount: NumberProps,
-  discount_percent: NumberProps,
-  sku:StringProps,
+  count: NumberProps,
   category_id: {
     ...NumberProps,
     CustomComponent: (id?:number) => <CategorySelector id={id} />

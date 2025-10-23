@@ -1,15 +1,16 @@
-import { Button, TextField } from "@mui/material"
+import { Button,  TextField } from "@mui/material"
 import './editorForm.css'
 import { ImageViewer } from "../ui/ImageViewer/ImageViewer"
 import { useState } from "react"
 import { type Field } from "./schemas"
+import type { BaseResponse } from "../../services/AuthService"
 
 
 
 
 export interface Edit {
-    onCreate: (data:Record<string, any>) => Promise<any>
-    onUpdate: (data:Record<string, any>) => Promise<any>
+    onCreate: (data:Record<string, any>) => Promise<BaseResponse<any>>
+    onUpdate: (data:Record<string, any>) => Promise<BaseResponse<any>>
     onImageSave?: ({image, id}:{image:string, id:number}) => Promise<any>
     fields: string[]
     schema: Record<string, Field>
@@ -19,14 +20,14 @@ export interface EditorFormProps extends Edit{
     onCancel:  () => void
     selected: Record<string, any> | null
     type: "create" | "update" | null
-   
+    refresh: () => void
 }
 
 
 
 export function EditorForm(props:EditorFormProps) {  
     const [file, setFile] = useState<File | null>(null)
-
+    const [errors,setErrors] = useState<string[]>([])
     const onFileChange = (file:File | null) => setFile(file)
 
     const getInitialValue = (key: string) => {
@@ -35,6 +36,7 @@ export function EditorForm(props:EditorFormProps) {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        setErrors([])
         const formData = new FormData(e.currentTarget)
         const jsonData: Record<string, any> = {}
 
@@ -51,8 +53,17 @@ export function EditorForm(props:EditorFormProps) {
 
             if(value) jsonData[field] = props.schema[field].transform(value)
         })
+
+        const request =  props.type === "create" ? await props.onCreate({...jsonData}) : await props.onUpdate({...jsonData, id: props.selected?.id,})
     
-        props.type === "create" ? props.onCreate({...jsonData}) : props.onUpdate({...jsonData, id: props.selected?.id,})
+        if(!request.success) { 
+            setErrors(request.data.map((el:{field:string}) => el.field))
+            return
+        }
+
+
+        props.refresh()
+        props.onCancel()
   }
 
 
@@ -69,10 +80,10 @@ export function EditorForm(props:EditorFormProps) {
                     return props.schema[el].CustomComponent(getInitialValue(el))
                 }
                 if(el === "imageUrl") return renderImageInput(el)
-
-                return <TextField name={el} label={el} key={el} defaultValue={getInitialValue(el)} />
+                
+                return <TextField error={errors.includes(el)} name={el} label={el} key={el} defaultValue={getInitialValue(el)} />
             })}
-    </form>
+        </form>
         <div className="editor_btns">
             <Button fullWidth color='info' variant='contained' onClick={props.onCancel}>Отмена</Button>
             <Button form="editorForm" fullWidth color='warning' variant='contained' type="submit">Сохранить</Button>

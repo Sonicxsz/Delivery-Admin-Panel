@@ -1,18 +1,17 @@
-import { http } from "../app/http/http"
 import { CategoryFields, CategorySchema } from "../components/editor-form/schemas"
+import { FormModal } from "../components/form-modal/form-modal"
 import { ItemsList } from "../components/items-list/ItemsList"
-import { FormModal } from "../pages/EditorPage/EditorPage"
 import { CategoryService } from "../services/CategoryService"
 
 
 
 
 export function EditCategory(){
-    const categoryService =  CategoryService.getInstance(http)
+    const categoryService =  CategoryService.getInstance()
 
 
     return <>
-              <ItemsList loadItems={categoryService.getCategories}/>
+              <ItemsList loadItems={categoryService.getCategories} name="EditCategory" />
               <FormModal fields={CategoryFields} schema={CategorySchema} onCreate={categoryService.createCategory} onUpdate={categoryService.updateCategory} />
             </>
 }

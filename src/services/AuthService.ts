@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-interface BaseResponse<T> {
+export interface BaseResponse<T> {
     success: boolean,
     code: number,
     data: T
@@ -20,6 +20,8 @@ type UserData = {
 export interface Http {
     post: <T>(url: string, data?: any) => Promise<BaseResponse<T>>
     get: <T>(url: string) => Promise<BaseResponse<T>>
+    delete: <T>(url: string, data?: any) => Promise<BaseResponse<T>>
+    patch: <T>(url: string, data?: any) => Promise<BaseResponse<T>>
 }
 
 
@@ -33,7 +35,7 @@ export class AuthService {
     user: UserData | null =  null
     
     store = create<Store>((set) => ({
-        isAuth: false, 
+        isAuth: true, 
         setAuth: (val: boolean) => set({ isAuth: val })
     }))
 

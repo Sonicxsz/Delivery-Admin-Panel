@@ -1,15 +1,21 @@
-import { createContext, useContext, useState } from "react";
+import {  useState } from "react";
 import { Outlet } from "react-router-dom";
 import { EditorHeader } from "../../components/editor-header/EditorHeader";
-import { EditorForm, type Edit } from "../../components/editor-form/EditorForm";
-import "./editorPage.css"
-import { Modal } from "@mui/material";
 import { EventEmitter } from "../../components/lib/EventEmitter";
+import { CategoryService } from "../../services/CategoryService";
+import { CatalogService } from "../../services/CatalogService";
+import { EditorContext } from "./useEditorContext";
+
+import "./editorPage.css"
 
 
 type Events = "OnRowDbClick" | "OnCreate" | "OnDelete" | "OnChange" | "OnRefresh"
 
 export const EditorEmitter = new EventEmitter<Events>()
+
+
+const categoryService = CategoryService.getInstance()
+const catalogService = CatalogService.getInstance()
 
 export function EditorPage(){
     const [selected, setSelected] = useState<Record<string, any> | null>(null)
@@ -17,20 +23,27 @@ export function EditorPage(){
     const [formType, setFormType] = useState<"create" | "update" | null>(null)
 
     EditorEmitter.useEvent("OnRowDbClick", onChange)
-    EditorEmitter.useEvent("OnCreate", onCreate)
-    EditorEmitter.useEvent("OnDelete", () => console.log("DELETING"))
     EditorEmitter.useEvent("OnChange", onChange)
+    EditorEmitter.useEvent("OnCreate", onCreate)
     EditorEmitter.useEvent("OnRefresh", refreshList)
 
 
+    EditorEmitter.useEvent("OnDelete", onDelete)
 
-    function onCreate () {
-        setFormType("create")
+
+   
+   async function onDelete(selected:Record<string, any>){
+        if(selected.editorName === "EditCatalog")  {
+            await catalogService.deleteCatalogItem(selected.id)
+        }
+        if(selected.editorName === "EditCategory")   {
+            await categoryService.deleteCategory(selected.id)
+        }
+        
+       refreshList()
     }
 
-    function onChange () {
-        setFormType("update")
-    }
+
 
     function onCloseModal () {
         setFormType(null)
@@ -41,11 +54,18 @@ export function EditorPage(){
         setSelected(null)
     }
 
+    function onCreate () {
+        setFormType("create")
+    }
+
+    function onChange () {
+        setFormType("update")
+    }
+
     return (
-//         
         <EditorContext.Provider value={{selected, formType, refresh,onCloseModal, setSelected, refreshList, onCreate, onChange}}>
             <div className="EditorPage">
-                <EditorHeader isRowSelected={Boolean(selected)}/>
+                <EditorHeader selected={selected}/>
                 <Outlet/>
              </div>
         </EditorContext.Provider>
@@ -54,38 +74,9 @@ export function EditorPage(){
 }
 
 
-export function FormModal(props:Edit){
-    const contextData = useEditorContext()
-
-
-    if(!contextData) return;
-
-    return <Modal onClose={contextData.onCloseModal} open={Boolean(contextData.formType)}>
-        <div className="form-modal">
-            <EditorForm {...props} type={contextData.formType} selected={contextData.selected} onCancel={contextData.onCloseModal}/>
-        </div>
-
-    </Modal>
-}
 
 
 
 
 
-interface EditorContext {
-    formType: "create" | "update" | null;
-    onCloseModal:()=> void, selected: Record<string, any> | null;
-    refresh: number;
-    onCreate:() => void;
-    onChange:() => void;
-    refreshList: () => void;
-    setSelected:React.Dispatch<React.SetStateAction<any>>
-}
 
-
-
-const EditorContext = createContext<EditorContext | null>(null)
-
-
-
-export const useEditorContext = () => useContext(EditorContext)

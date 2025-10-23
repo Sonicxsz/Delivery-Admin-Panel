@@ -26,7 +26,7 @@ export class CatalogService {
       }
 
 
-    static getInstance(http: Http) {
+    static getInstance() {
         if (!CatalogService.instance) {
           CatalogService.instance = new CatalogService(http)
         }
@@ -34,19 +34,23 @@ export class CatalogService {
     }
 
     loadCatalog = async () => {
-        return (await this.http.get<Catalog[]>("/catalog/all")).data
+        return (await this.http.get<Catalog[]>("/items/all")).data
     }
 
     addImage = async (body:{id: number, image:string}) => {
-        return await http.post<string>("/catalog/add-image", body)
+        return await this.http.post<string>("/items/add-image", body)
     }
 
     updateCatalogItem = async (body:Record<string,any>) => { 
-      return (await http.patch("/catalog", body))
+      return (await this.http.patch("/items", body))
     }
 
     createCatalogItem = async (body:Record<string,any>) => { 
-      return (await http.post("/catalog", body))
+      return  (await this.http.post("/items", body))
+    }
+
+    deleteCatalogItem = async (id:number) => {
+      return (await this.http.delete(`/items/${id}`))
     }
   
 }
