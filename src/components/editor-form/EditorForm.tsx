@@ -29,7 +29,7 @@ export function EditorForm(props:EditorFormProps) {
     const [file, setFile] = useState<File | null>(null)
     const [errors,setErrors] = useState<string[]>([])
     const onFileChange = (file:File | null) => setFile(file)
-
+    console.log(props.selected)
     const getInitialValue = (key: string) => {
         return props.type === "create" ? "" : props.selected?.[key] || ""
     }
@@ -44,7 +44,7 @@ export function EditorForm(props:EditorFormProps) {
             if (field === "id") return
 
 
-            if (field === "imageUrl" && file) {
+            if (field === "image_url" && file) {
                 props.schema[field].transform(file).then((data: string)  => {props.onImageSave?.({image:data, id: props.selected?.id})})
                 .finally(() => setFile(null))
                 return
@@ -79,7 +79,7 @@ export function EditorForm(props:EditorFormProps) {
                 if(props.schema[el]?.CustomComponent) {
                     return props.schema[el].CustomComponent(getInitialValue(el))
                 }
-                if(el === "imageUrl") return renderImageInput(el)
+                if(el === "image_url") return renderImageInput(el)
                 
                 return <TextField error={errors.includes(el)} name={el} label={el} key={el} defaultValue={getInitialValue(el)} />
             })}

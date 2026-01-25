@@ -12,6 +12,7 @@ export function ImageViewer({
   onFileChange?: (file: File | null) => void
   name?: string
 }) {
+  console.log(initial)
   const [file, setFile] = useState<{ preview: string; value: File } | null>(null)
   const [error, setError] = useState<null | string>(null)
 
@@ -38,11 +39,10 @@ export function ImageViewer({
       setError("Неверный формат файла")
     }
   }
-
   return (
     <div className="image-wrapper">
       <div className="image-wrapper__image">
-        <img src={(file && file.preview) || base + initial} alt="pick image" />
+        <img src={(file && file.preview) || base + '/uploads/' + initial} alt="pick image" />
       </div>
       {error && <span className="error_text">{error}</span>}
       <Input name={name} type="file" onChange={handleChangeAvatar} />

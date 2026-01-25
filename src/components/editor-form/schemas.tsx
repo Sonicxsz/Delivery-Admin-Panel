@@ -89,7 +89,7 @@ export const CatalogSchema = {
     ...NumberProps,
     CustomComponent: (value: any) => value && <Typography>ID: {value}</Typography>
   },
-  imageUrl: FileProps,
+  image_url: FileProps,
   grams: NumberProps,
   price: NumberProps,
   name: StringProps,
